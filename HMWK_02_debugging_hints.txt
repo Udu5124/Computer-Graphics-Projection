@@ -1,0 +1,257 @@
+#----------------------------------------------------------------------
+Assignment 02 Debugging Hints
+
+#----------------------------------------------------------------------
+The easiest way to debug any differences in results you have is to
+start with the simplest test.  Take a careful look at the output
+your program generates and compare it bit-by-bit with the
+corresponding Results/ file.
+
+Run your program using pyramid.sdf as the model file (argument 1)
+and pyramid_setting_01.view as the view file (argument 2).
+
+This model / view combination is the same as the example given in
+the "4303 Projection Parallel" handout, so you should be seeing
+the same numerical results.
+
+  IMPORTANT -- IMPORTANT -- IMPORTANT -- IMPORTANT -- IMPORTANT
+
+    In the following, there are many statements about how
+    if you observe a certain result, it means a certain
+    mistake has occurred.
+
+    Each of this statements should be read as IT'S POSSIBLE
+    THAT a certain mistake was made.
+
+    There could be other reasons that the result happened,
+    some more obscure than others.  The listed reason is
+    the most PROBABLE reason.
+
+    Finally, since this is all written in C, you should
+    keep in mind that a wild pointer could cause almost
+    any behavior.  Ha!
+
+  IMPORTANT -- IMPORTANT -- IMPORTANT -- IMPORTANT -- IMPORTANT
+
+#----------------------------------------------------------------------
+If you are not getting the sames results, start at the top of the
+results file and compare it line-by-line to your results.
+
+The first part of the results is the dump of the original model:
+
+#- Model parameters --------------------
+# Vertex count :     5
+# Face count   :     6
+
+#- Vertex list -------------------------
+#  [    0]       0.000000,      0.000000,      0.000000
+#  [    1]       0.800000,      0.000000,      0.000000
+#  [    2]       0.000000,      0.800000,      0.000000
+#  [    3]       0.800000,      0.800000,      0.000000
+#  [    4]       0.400000,      0.400000,      0.700000
+
+#- Face list ---------------------------
+#  [    0]      3,     1,     0
+#  [    1]      2,     3,     0
+#  [    2]      1,     4,     0
+#  [    3]      4,     2,     0
+#  [    4]      1,     3,     4
+#  [    5]      2,     4,     3
+#---------------------------------------
+
+Your output should match EXACTLY.
+
+  - If the number of vertices is wrong, this means you are not
+    counting the 'v' lines properly.  Find out why and fix it!
+
+  - If the number of faces is wrong, this means you are not
+    counting the 'f' lines properly.  Find out why and fix it!
+
+  - If any of the vertices in the Vertex list has the wrong
+    coordinates, this means you did not scan the corresponding
+    vertex line properly.  Find out why and fix it!
+
+  - If any of the faces in the Face list has the wrong vertex
+    numbers, this means you did not scan the corresponding face
+    line correctly.  Find out why and fix it!
+
+Do not bother going any further in your work until you have
+gotten this first section to load and print correctly.  If any of
+these values is incorrect, you do not have any chance of getting
+the correct results later.
+
+#----------------------------------------------------------------------
+Once the first part is displaying OK, move on to the next section.
+
+This is the dump of the original view:
+
+#- View parameters ---------------------
+# Bézier resolution :     0
+# Euler angles      :      0.000000,      0.000000,      0.000000
+# World limits      :     -1.000000,     -1.000000,      1.000000,      1.000000
+# Camera distance   :      0.000000
+# Canvas width      :   500
+# Canvas height     :   400
+# Screen limits     :      0.100000,      0.100000,      0.900000,      0.900000
+# Portal pixels     :   50,  450,   40,  360
+#---------------------------------------
+
+Your output should match EXACTLY.
+
+  - The Bézier resolution is not yet being used.  It should be 0.
+    If it's not, this means a value was inappropriately stored in
+    this field of the View structure.  Find out why and fix it!
+
+  - The Euler angles are not yet being used.  They should all be
+    0.000000.  If they aren't, that means a value was
+    inappropriately stored in one or more of these fields.  Find
+    out why and fix it!
+
+  - If any of the World limits does not match what's in the view
+    file, this means you didn't scan the 'w' line properly.  Find
+    out why and fix it!
+
+  - If the Camera distance does not match what's in the view file,
+    this means you didn't scan the 'd' line properly.  Find out
+    why and fix it!
+
+  - If either (or both) of the Canvas width or Canvas height is
+    not correct, this means you didn't scan the 'c' line properly.
+    Find out why and fix it!
+
+  - If any of the Screen limits does not match what's in the view
+    file, this means you didn't scan the 's' line properly.  Find
+    out why and fix it!
+
+  - If any of the Portal pixels is incorrect, this means that you
+    didn't compute them correctly in loadView().  Find out why and
+    fix it!
+
+Do not bother going any further in your work until you have
+gotten this second section to load and print correctly.  If any of
+these values is incorrect, you do not have any chance of getting
+the correct results later.
+
+#----------------------------------------------------------------------
+Once the second section is displaying OK, move on to the third
+section.  This is the dump of the computed projection parameters:
+
+#- Projection parameters ---------------
+# (fx, fy) : (      1.000000,      1.000000 )
+# (gx, gy) : (     50.000000,     40.000000 )
+# (sx, sy) : (    200.000000,    160.000000 )
+# (ax, ay) : (    250.000000,    200.000000 )
+# Camera distance :      0.000000
+#---------------------------------------
+
+Your output should match EXACTLY.
+
+If any of these values is incorrect, it means that you did not do
+the computation properly.
+
+Start at fx, fy and consider each line in succession.  Ensure that
+each is displaying the correct values before moving on to the next
+line.
+
+If there is ANY difference at all, go back to the
+computeProjection() function, identify the problem in your
+calculation, and fix it!
+
+Do not bother going any further in your work until you have
+gotten this third section to compute and print correctly.  If any
+of these values is incorrect, you do not have any chance of
+getting the correct results later.
+
+#----------------------------------------------------------------------
+Once the third section is displaying OK, move on to the fourth
+section.  This is the dump of the model structure after the
+vertices have been projected:
+
+#- Model parameters --------------------
+# Vertex count :     5
+# Face count   :     6
+
+#- Vertex list -------------------------
+#  [    0]     250.000000,    200.000000,      0.000000
+#  [    1]     410.000000,    200.000000,      0.000000
+#  [    2]     250.000000,    328.000000,      0.000000
+#  [    3]     410.000000,    328.000000,      0.000000
+#  [    4]     330.000000,    264.000000,      0.000000
+
+#- Face list ---------------------------
+#  [    0]      3,     1,     0
+#  [    1]      2,     3,     0
+#  [    2]      1,     4,     0
+#  [    3]      4,     2,     0
+#  [    4]      1,     3,     4
+#  [    5]      2,     4,     3
+#---------------------------------------
+
+Your output should match EXACTLY.
+
+  - If the number of vertices or faces has changed, this means
+    that somewhere after computing the projection, you have
+    overwritten these values.  Find out where and fix it!
+
+  - If any of the vertices displays incorrect projected
+    coordinates, this means that you have not considered the
+    proper vertex, not projected it correctly, or not stored
+    its projected value in the correct place.
+
+  - If the Face list is not correct, this means that you have
+    overwritten it somewhere.  Find out where and fix it!
+
+Do not bother going any further in your work until you have
+gotten this fourth section to compute and print correctly.  If any
+of these values is incorrect, you do not have any chance of
+getting the correct results later.
+
+#----------------------------------------------------------------------
+Once the fourth section is displaying OK, move on to the fifth and
+final section.  This is actual SDF data emitted by the program.
+
+c  500  400
+l     50       40       50      360
+l     50      360      450      360
+l    450      360      450       40
+l    450       40       50       40
+l    410.0    328.0    410.0    200.0
+l    410.0    200.0    250.0    200.0
+l    250.0    200.0    410.0    328.0
+l    250.0    328.0    410.0    328.0
+l    410.0    328.0    250.0    200.0
+l    250.0    200.0    250.0    328.0
+l    410.0    200.0    330.0    264.0
+l    330.0    264.0    250.0    200.0
+l    250.0    200.0    410.0    200.0
+l    330.0    264.0    250.0    328.0
+l    250.0    328.0    250.0    200.0
+l    250.0    200.0    330.0    264.0
+l    410.0    200.0    410.0    328.0
+l    410.0    328.0    330.0    264.0
+l    330.0    264.0    410.0    200.0
+l    250.0    328.0    330.0    264.0
+l    330.0    264.0    410.0    328.0
+l    410.0    328.0    250.0    328.0
+
+Your output should match EXACTLY.
+
+  - If the 'c' line is incorrect, this means that you have
+    overwritten the canvas width and height somewhere.  Find
+    out where and fix it!
+
+  - If any of the first four 'l' lines is incorrect, this means
+    that you are not printing tbe edges of the viewport region
+    correctly (or they are not in the correct order).  Check
+    your code in main().  (Remember these edges are to be
+    generated and printed in counter-clockwise order staring
+    in the lower-left corner.)
+
+  - If any of the other 'l' lines is incorrect, this means that
+    you are not considering the faces in the correct order, not
+    retrieving the vertex numbers properly, or not passing the
+    vertex informatio to dumpTriangle() correctly.  Find out
+    what's wrong and fix it!
+
+#----------------------------------------------------------------------
+

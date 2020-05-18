@@ -1,0 +1,357 @@
+#----------------------------------------------------------------------
+Assignment 02
+
+#----------------------------------------------------------------------
+Purpose:
+
+  * Demonstrate ability to load a view file, compute a projection,
+    project vertices, and generate lines.
+
+  * Demonstrate ability to write some additional (simple) C code.
+
+#----------------------------------------------------------------------
+Background:
+
+  * The fundamental mathematics of projection (parallel and
+    perspective) are described in the two handouts
+    "4303 Projection Parallel" and "4303 Projections"
+    available on Canvas.
+
+  * View files have the following format.  (The basic structure is
+    the same as the SVFM file, just with different entries.)
+
+    - Blank lines are to be ignored.  (A blank line has no
+      characters at all or is just whitespace.)
+
+    - Lines with '#' as the first non-whitespace character are
+      comments and are to be ignored.
+
+    - A line with a 'w' as the first non-whitespace character is
+      the Worldspace line.  There will be four numbers following
+      the 'w': the xMin, yMin, xMax, and yMax limits of the
+      desired worldspace.  The 'w' and the limits will be
+      separated by whitespace.  Example:
+
+        w  1.1 2.2  16.5   23.3
+
+    - A line with a 'c' as the first non-whitespace character is
+      the Canvas size line.  There will be two integers following
+      the 'c': the width and the height of the canvas.  The 'c'
+      and the width and height will be separated by whitespace.
+      Example:
+
+        c   500  400
+
+    - A line with an 's' as the first non-whitespace character is
+      the usable Screenspace line.  There will be four numbers
+      following the 's': the xMin, yMin, xMax, and yMax limits of
+      the desired viewport.  The 's' and the limits will be
+      separated by whitespace.  Example:
+
+        s   0.10    0.15  0.80   0.75
+
+    - A line with a 'd' as the first non-whitespace character is
+      the viewpoint Distance line.  There will be a number
+      following the 'd': the position of the viewpoint on the z
+      axis.  The 'd' and the viewpoint position will be separated
+      by whitespace.  Example:
+
+        d  12.9
+
+      If the d is zero (or omitted entirely), the view represents
+      a PARALLEL projection.  (If the d is non-zero, the view
+      represents a PERSPECTIVE projection, with the viewpoint
+      located at [ 0, 0, d ]T.)
+
+    - If a line starts with any other non-whitespace character, it
+      should be silently ignored.  ('silently' means you should
+      not print an error message.  Just ignore it.)
+
+#----------------------------------------------------------------------
+Tasks:
+
+  1. Download hmwk_02_dalioba.zip from Canvas.
+
+  2. Unzip the file somewhere convenient.
+
+  3. Change 'dalioba' in the name of the directory to your NetID.
+     (Your NetID is three letters followed by four or five digits.
+      The directory name will now be something like
+      'hmwk_02_abc1234' but with _your_ NetID in place of
+      'abc1234'.)
+
+  4. Look in that directory.
+
+  5. Change the header lines in the hmwk_02.c, projection.c,
+     triangle.c, and view.c files.
+
+      -- Line 1:  Family name first, then a comma, then
+                  personal name.
+
+      -- Line 2:  Your NetID.
+
+      -- Line 3:  The date you edited the file, in the format
+                  YYYY-MM-DD.
+
+     These three lines must remain the first three lines in the
+     files.  Do NOT change anything in the header (.h) files or
+     the other .c files.
+
+  6. There are a number of TODO: comments in the hmwk_02.c,
+     projection.c, triangle.c, and view.c files that need to be
+     replaced with the appropriate C code.  (Do NOT change
+     anything in any .c file except to replace a TODO comment with
+     your code.)
+
+     Here's a list:
+
+hmwk_02.c:50:     // TODO: Print four 'l' lines, corresponding to the ...
+hmwk_02.c:59:     // TODO: For each face of the model, draw the triangle ...
+
+projection.c:14:  // TODO: Allocate a Projection structure. ...
+projection.c:23:  // TODO: Allocate a Projection structure (allocProjection()). ...
+projection.c:46:  // TODO: Free the projection structure. ...
+projection.c:52:  // TODO: Using the projection parameters, project the ...
+projection.c:65:  // TODO: Use projectVertex() to project each of the ...
+
+triangle.c:13:    // TODO: Print three 'l' lines, one for each side of ...
+
+view.c:14:        // TODO: Allocate a View structure. ...
+view.c:53:        // TODO: Free the view structure. ...
+view.c:59:        // TODO: Open the file indicated by fName. ...
+
+  7. When you have done so, compile and run everything as shown.
+
+     Notice that there are two input files being given to hmwk_02,
+     the first is the model file (Tests/pyramid.svfm) as was used
+     in Homework 01 and the second is the view file
+     (Tests/pyramid_setting_01.view).
+
+     You should observe the given output.
+
+$ gcc -o hmwk_02 hmwk_02.c face.c model.c projection.c triangle.c vertex.c view.c -lm
+$ ./hmwk_02 Tests/pyramid.svfm Tests/pyramid_setting_01.view 
+#- Model parameters --------------------
+# Vertex count :     5
+# Face count   :     6
+
+#- Vertex list -------------------------
+#  [    0]       0.000000,      0.000000,      0.000000
+#  [    1]       0.800000,      0.000000,      0.000000
+#  [    2]       0.000000,      0.800000,      0.000000
+#  [    3]       0.800000,      0.800000,      0.000000
+#  [    4]       0.400000,      0.400000,      0.700000
+
+#- Face list ---------------------------
+#  [    0]      3,     1,     0
+#  [    1]      2,     3,     0
+#  [    2]      1,     4,     0
+#  [    3]      4,     2,     0
+#  [    4]      1,     3,     4
+#  [    5]      2,     4,     3
+#---------------------------------------
+#- View parameters ---------------------
+# Bézier resolution :     0
+# Euler angles      :      0.000000,      0.000000,      0.000000
+# World limits      :     -1.000000,     -1.000000,      1.000000,      1.000000
+# Camera distance   :      0.000000
+# Canvas width      :   500
+# Canvas height     :   400
+# Screen limits     :      0.100000,      0.100000,      0.900000,      0.900000
+# Portal pixels     :   50,  450,   40,  360
+#---------------------------------------
+#- Projection parameters ---------------
+# (fx, fy) : (      1.000000,      1.000000 )
+# (gx, gy) : (     50.000000,     40.000000 )
+# (sx, sy) : (    200.000000,    160.000000 )
+# (ax, ay) : (    250.000000,    200.000000 )
+# Camera distance :      0.000000
+#---------------------------------------
+#- Model parameters --------------------
+# Vertex count :     5
+# Face count   :     6
+
+#- Vertex list -------------------------
+#  [    0]     250.000000,    200.000000,      0.000000
+#  [    1]     410.000000,    200.000000,      0.000000
+#  [    2]     250.000000,    328.000000,      0.000000
+#  [    3]     410.000000,    328.000000,      0.000000
+#  [    4]     330.000000,    264.000000,      0.000000
+
+#- Face list ---------------------------
+#  [    0]      3,     1,     0
+#  [    1]      2,     3,     0
+#  [    2]      1,     4,     0
+#  [    3]      4,     2,     0
+#  [    4]      1,     3,     4
+#  [    5]      2,     4,     3
+#---------------------------------------
+c  500  400
+l     50       40       50      360
+l     50      360      450      360
+l    450      360      450       40
+l    450       40       50       40
+l    410.0    328.0    410.0    200.0
+l    410.0    200.0    250.0    200.0
+l    250.0    200.0    410.0    328.0
+l    250.0    328.0    410.0    328.0
+l    410.0    328.0    250.0    200.0
+l    250.0    200.0    250.0    328.0
+l    410.0    200.0    330.0    264.0
+l    330.0    264.0    250.0    200.0
+l    250.0    200.0    410.0    200.0
+l    330.0    264.0    250.0    328.0
+l    250.0    328.0    250.0    200.0
+l    250.0    200.0    330.0    264.0
+l    410.0    200.0    410.0    328.0
+l    410.0    328.0    330.0    264.0
+l    330.0    264.0    410.0    200.0
+l    250.0    328.0    330.0    264.0
+l    330.0    264.0    410.0    328.0
+l    410.0    328.0    250.0    328.0
+$
+
+     Your output should match this EXACTLY.  'EXACTLY' means just
+     that.  It should be the same character-by-character.  When
+     your program is tested, it will be run against other data
+     files and the output compared using diff.
+
+  8. There are a number of model files in Tests/ along with some
+     view files for each.  Run all of these tests and compare
+     your results to those given in Results/.  Your output should
+     match EXACTLY.
+
+  9. Use diff (fc on Windows) to compare your output to that of
+     the results file.  They should match with NO DIFFERENCES.
+
+ 10. Save the output of hmwk_02 in a file with the '.sdf'
+     extension and use the Display tool to view it.  (See the
+     Display tool posting on Canvas for more info.  The SDF files
+     in Results/ are all viewable with the Display tool.)
+
+     Your display should look like the images in Screenshots/.
+
+#----------------------------------------------------------------------
+Submission:
+
+Make a zipfile of your 'hmwk_02_abc1234' directory (with your
+source files in it) and submit it on Canvas as your results
+for this assignment.
+
+You can get dinged points for work not in the proper format so
+even if your program works (and works correctly!), you might not
+earn full credit.  Check your work!
+
+#----------------------------------------------------------------------
+Hints:
+  1. Ensure your program compiles and runs correctly.  Not
+     compiling or not generating the correct output as shown in
+     the results files will cost you points.
+
+     The output from your program will be compared using diff
+     against the reference results so ensure you DO NOT CHANGE
+     anything aside from the indicated TODO spots.  In particular,
+     do not change ANYTHING in the header (.h) files.
+
+     Ensure that your output matches EXACTLY that shown in the
+     corresponding results file.  'EXACTLY' mean just that.  It
+     must be identical character-by-character.  No differences in
+     spacing, values, punctuation, etc.
+
+  2. Ensure that you update the three header lines in the source
+     .c files that you change with YOUR name (family name first,
+     then a comma, then your personal name), YOUR NetID, and the
+     date you edit the file (in the format YYYY-MM-DD).
+
+     Not updating the header lines properly will cost you points.
+
+     Not having the header lines as the first three lines in the
+     files will cost you points.
+
+  3. This is not a hard assignment.  There are only eleven (11)
+     TODO spots that need to be filled in.
+
+hmwk_02.c:50:     // TODO: Print four 'l' lines, corresponding to the ...
+     - Eight (8) lines of code.  (Four printf calls each split on
+       two lines.)
+
+hmwk_02.c:59:     // TODO: For each face of the model, draw the triangle ...
+     - Six (6) lines of code.
+
+projection.c:14:  // TODO: Allocate a Projection structure. ...
+     - Seven (7) lines of code.
+
+projection.c:23:  // TODO: Allocate a Projection structure (allocProjection()). ...
+     - Thirteen (13) lines of code.
+
+projection.c:46:  // TODO: Free the projection structure. ...
+     - Three (3) lines of code.
+
+projection.c:52:  // TODO: Using the projection parameters, project the ...
+     - Fifteen (15) lines of code.
+
+projection.c:65:  // TODO: Use projectVertex() to project each of the ...
+     - Three (3) lines of code.
+
+triangle.c:13:    // TODO: Print three 'l' lines, one for each side of ...
+     - Six (6) lines of code.  (Three printf calls each split on
+       two lines.)
+
+view.c:14:        // TODO: Allocate a View structure. ...
+     - Seven (7) lines of code.
+
+view.c:53:        // TODO: Free the view structure. ...
+     - Three (3) lines of code.
+
+view.c:59:        // TODO: Open the file indicated by fName. ...
+     - Seventy-three (73) lines of code.  Again, this is the long
+       one.  Also again, it is not difficult, however, if you go
+       about the problem in an organized way.  (And especially if
+       you steal the structure of how to do this from the
+       loadModel() routine.)
+
+     By the way, don't get too concerned if you don't get the same
+     number of lines of code that I state here.  These numbers are
+     just a guide so you can see if you're on the correct track or
+     not.
+
+     It's OK to have a few more or less when you write it.  (I put
+     all closing braces on their own lines, so my code tends to be
+     a bit longer.)
+
+     On the other hand, if you find yourself writing a LOT more
+     code than this, you're probably going down the wrong track.
+
+  4. Ensure your submission is packaged EXACTLY as described above.
+
+      -- Your submission should be a ZIP FILE (not a tar, rar, gz,
+         or any other kind of compressed file).
+
+      -- The zip file should be named 'hmwk_02_abc1234.zip' (with
+         'abc1234' replaced with YOUR NetID).
+
+      -- This zip file should have ONE item in it, a directory
+         named 'hmwk_02_abc1234'  (with 'abc1234' replaced with
+         YOUR NetID).
+
+      -- Your source files should be in that directory.  Do NOT
+         change the names of any of the source files.  They
+         should be hmwk_02.c, projection.c, triangle.c, and
+         view.c.  You do not need to include any other files.
+
+         (They will just be replaced with the reference solution
+          versions anyway.)
+
+     Submissions in the wrong format score ZERO points.
+
+  5. After you submit your zip file on Canvas, download it
+     from Canvas and check that your submission is in the
+     proper format, that the program runs and prints the correct
+     output, and that you updated the header lines correctly in
+     the .c source files.
+
+  6. Are you CERTAIN you complied with all of these nit-picking
+     instructions?  Really?  Maybe you ought to check just one
+     more time. :)
+
+#----------------------------------------------------------------------
